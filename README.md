@@ -46,7 +46,7 @@ python train.py
 cd adversarial_projection
 python train.py
 ```
-If you want to change the hyperparameter settings of CoMHE, please refer to the code for different input arguments such as dimension and number of projections
+If you want to change the hyperparameter settings of CoMHE, please refer to the file ``train.py`` for different input arguments such as dimension and number of projections
 
 ### Citation
 
