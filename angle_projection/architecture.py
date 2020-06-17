@@ -72,9 +72,7 @@ class VGG():
     def _add_thomson_first(self, filt, n_filt):
 
         filt = tf.reshape(filt, [-1, n_filt])
-        filt_neg = filt*-1
-        filt = tf.concat((filt,filt_neg), axis=1)
-        n_filt *= 2
+
         filt_neg = filt*-1
         filt = tf.concat((filt,filt_neg), axis=1)
         n_filt *= 2
@@ -114,7 +112,7 @@ class VGG():
         final = tf.pow(cross_terms, tf.ones_like(cross_terms) * (-1))
         final -= tf.matrix_band_part(final, -1, 0)
         cnt = n_filt * (n_filt - 1) / 2.0
-        loss = 100 * tf.reduce_sum(final) / cnt
+        loss = 1 * tf.reduce_sum(final) / cnt
 
         tf.add_to_collection('thomson_loss', loss)
         tf.add_to_collection('p_loss', p_loss)

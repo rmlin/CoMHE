@@ -3,15 +3,22 @@ import numpy as np
 
 class VGG():
     def get_conv_filter(self, shape, reg, stddev):
-        seed_num=shape[0]*shape[1]*shape[2]*shape[3]
-        init = tf.random_normal_initializer(stddev=stddev,seed=seed_num)
+        # seed_num=shape[0]*shape[1]*shape[2]*shape[3]
+        init = tf.random_normal_initializer(stddev=stddev)
         if reg:
             regu = tf.contrib.layers.l2_regularizer(self.wd)
             filt = tf.get_variable('filter', shape, initializer=init,regularizer=regu)
         else:
             filt = tf.get_variable('filter', shape, initializer=init)
 
-        return filt      
+        return filt   
+
+    def get_p(self, shape):
+        init = tf.random_normal_initializer(mean=0.0, stddev=1.0, dtype=tf.float32)
+        regu = tf.contrib.layers.l2_regularizer(self.wd)
+        p = tf.get_variable('project', shape, initializer=init,regularizer=regu)
+        
+        return p    
 
     def get_bias(self, dim, init_bias, name):
         with tf.variable_scope(name):
@@ -61,7 +68,7 @@ class VGG():
     def _max_pool(self, bottom, name):
         return tf.nn.max_pool(bottom, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1],
             padding='SAME', name=name)
-    
+
     def _add_thomson_first(self, filt, n_filt):
 
         filt = tf.reshape(filt, [-1, n_filt])
@@ -79,47 +86,52 @@ class VGG():
 
         tf.add_to_collection('thomson_loss', loss)
 
-    def _add_thomson_project(self, oldfilt, ksize, n_input, oldn_filt, pd, pn, pnd):
+    def _stat(self, filt, n_filt):
+
+        filt = tf.reshape(filt, [-1, n_filt])
+        inner_pro = self.cal(filt)
+        cross_terms = (2.0 - 2.0 * inner_pro + tf.diag([1.0] * n_filt))
+        final = tf.pow(cross_terms, tf.ones_like(cross_terms) * (-1))
+        final -= tf.matrix_band_part(final, -1, 0)
+        cnt = n_filt * (n_filt - 1) / 2.0
+        loss = tf.reduce_sum(final) / cnt
+        return loss
+
+    def _add_thomson_project(self, oldfilt, oldn_filt, lr_, pd, pn):
+        ksize = oldfilt.get_shape().as_list()[0]
+        n_input = oldfilt.get_shape().as_list()[2]
         pd1 = pd
         pd2 = ksize*ksize*n_input
-        total_loss = 0
-        if pnd == 0:
-            total_p = pn
-        else:
-            total_p = oldn_filt/pnd
-        for i in range(total_p):
-            filt = tf.reshape(oldfilt, [-1, oldn_filt])
-            p = tf.random_normal(shape=[pd1,pd2],mean=0.0,stddev=1.0,dtype=tf.float32,seed=n_input+i)
-            filt = tf.matmul(p,filt)
+        t_loss = 0
+        lr = lr_
 
-            filt_neg = filt*-1
-            filt = tf.concat((filt,filt_neg), axis=1)
-            n_filt = 2 * oldn_filt
+        filt = tf.reshape(oldfilt, [-1, oldn_filt])
+        p = self.get_p(shape=[pd1,pd2])
+        cal_filt = tf.matmul(p,filt)
+        filt_mhe = self._stat(cal_filt,oldn_filt)
+        p = p + lr * (tf.gradients(filt_mhe, p)[0])
+        filt = tf.matmul(p,filt)
 
-            filt_norm = tf.sqrt(tf.reduce_sum(filt*filt, [0], keep_dims=True) + 1e-4)
-            norm_mat = tf.matmul(tf.transpose(filt_norm), filt_norm)
-            inner_pro = tf.matmul(tf.transpose(filt), filt)
-            inner_pro /= norm_mat
+        filt_neg = filt*-1
+        filt = tf.concat((filt,filt_neg), axis=1)
+        n_filt = oldn_filt * 2
 
-            cross_terms = (2.0 - 2.0 * inner_pro + tf.diag([1.0] * n_filt))
-            final = tf.pow(cross_terms, tf.ones_like(cross_terms) * (-1))
-            final -= tf.matrix_band_part(final, -1, 0)
-            cnt = n_filt * (n_filt - 1) / 2.0
-            loss = 1 * tf.reduce_sum(final) / cnt
-            total_loss += loss
-        total_loss = total_loss/total_p
+        inner_pro = self.cal(filt)
+        cross_terms = (2.0 - 2.0 * inner_pro + tf.diag([1.0] * n_filt))
+        final = tf.pow(cross_terms, tf.ones_like(cross_terms) * (-1))
+        final -= tf.matrix_band_part(final, -1, 0)
+        cnt = n_filt * (n_filt - 1) / 2.0
+        loss = 1 * tf.reduce_sum(final) / cnt
 
-        tf.add_to_collection('thomson_loss', total_loss)
+        tf.add_to_collection('thomson_loss', loss)
+        tf.add_to_collection('p_loss', filt_mhe)
+
+
 
     def _add_thomson_final(self, filt, n_filt):
 
         filt = tf.reshape(filt, [-1, n_filt])
-        
-        filt_norm = tf.sqrt(tf.reduce_sum(filt*filt, [0], keep_dims=True) + 1e-4)
-        norm_mat = tf.matmul(tf.transpose(filt_norm), filt_norm)
-        inner_pro = tf.matmul(tf.transpose(filt), filt)
-        inner_pro /= norm_mat
-
+        inner_pro = self.cal(filt)
         cross_terms = (2.0 - 2.0 * inner_pro + tf.diag([1.0] * n_filt))
         final = tf.pow(cross_terms, tf.ones_like(cross_terms) * (-1))
         final -= tf.matrix_band_part(final, -1, 0)
@@ -127,7 +139,7 @@ class VGG():
         loss = 10 * tf.reduce_sum(final) / cnt
         tf.add_to_collection('thomson_final', loss)
 
-    def _conv_layer(self, bottom, ksize, n_filt, is_training, pd, pn, pnd, name, stride=1, 
+    def _conv_layer(self, bottom, ksize, n_filt, is_training, lr_, pd, pn, name, stride=1, 
         pad='SAME', relu=False, reg=True, thom='False', bn=True):
 
         with tf.variable_scope(name) as scope:
@@ -139,10 +151,11 @@ class VGG():
             if thom == 'True':
                 if n_input == 3:
                     self._add_thomson_first(filt, n_filt)
-                else:                  
-                    self._add_thomson_project(filt, ksize, n_input, n_filt, pd, pn, pnd)
+                else: 
+                    self._add_thomson_project(filt, n_filt, lr_, pd, pn)
             elif thom == 'Final':
                 self._add_thomson_final(filt, n_filt)
+
 
             conv = tf.nn.conv2d(bottom, filt, [1, stride, stride, 1], padding=pad)
 
@@ -154,8 +167,9 @@ class VGG():
             else:
                 return conv
 
-    def build(self, rgb, n_class, is_training, pd, pn, pnd):
+    def build(self, rgb, n_class, is_training, lr_, pd, pn):
         self.wd = 5e-4
+
         feat = (rgb - 127.5) / 128.0
 
         ksize = 3
@@ -164,28 +178,28 @@ class VGG():
         # 32X32
         n_out = 64
         for i in range(n_layer):
-            feat= self._conv_layer(feat, ksize, n_out, is_training, pd, pn, pnd, name="conv1_" + str(i), bn=True, relu=True,
+            feat = self._conv_layer(feat, ksize, n_out, is_training, lr_, pd, pn, name="conv1_" + str(i), bn=True, relu=True,
                                     pad='SAME',  reg=True, thom='True')
         feat = self._max_pool(feat, 'pool1')
 
         # 16X16
         n_out = 128
         for i in range(n_layer):
-            feat= self._conv_layer(feat, ksize, n_out, is_training, pd, pn, pnd, name="conv2_" + str(i), bn=True, relu=True,
+            feat = self._conv_layer(feat, ksize, n_out, is_training, lr_, pd, pn,  name="conv2_" + str(i), bn=True, relu=True,
                                     pad='SAME',  reg=True, thom='True')
         feat = self._max_pool(feat, 'pool2')
 
         # 8X8
         n_out = 256
         for i in range(n_layer):
-            feat = self._conv_layer(feat, ksize, n_out, is_training, pd, pn, pnd, name="conv3_" + str(i), bn=True, relu=True,
+            feat = self._conv_layer(feat, ksize, n_out, is_training, lr_, pd, pn,  name="conv3_" + str(i), bn=True, relu=True,
                                     pad='SAME',  reg=True, thom='True')
         feat = self._max_pool(feat, 'pool3')
 
-        self.fc6= self._conv_layer(feat, 4, 256, is_training, pd, pn, pnd, "fc6", bn=False, relu=False, pad='VALID',
+        self.fc6 = self._conv_layer(feat, 4, 256, is_training, lr_, pd, pn,  "fc6", bn=False, relu=False, pad='VALID',
                                     reg=True, thom='True')
 
-        self.score= self._conv_layer(self.fc6, 1, n_class, is_training, pd, pn, pnd, "score", bn=False, relu=False, pad='VALID',
+        self.score = self._conv_layer(self.fc6, 1, n_class, is_training, lr_, pd, pn,  "score", bn=False, relu=False, pad='VALID',
                                       reg=True,  thom='Final')
 
         self.pred = tf.squeeze(tf.argmax(self.score, axis=3))
