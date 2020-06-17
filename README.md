@@ -5,7 +5,7 @@ By Rongmei Lin, Weiyang Liu, Zhen Liu, Chen Feng, Zhiding Yu, James Rehg, Li Xio
 ### Introduction
 Inspired by the Thomson problem in physics where the distribution of multiple propelling electrons on a unit sphere can be modeled via minimizing some potential energy, hyperspherical energy minimization has demonstrated its potential in regularizing neural networks and improving their generalization power. In our paper, we propose the compressive minimum hyperspherical energy (CoMHE) as a more effective regularization for neural networks. Specifically, CoMHE utilizes projection mappings to reduce the dimensionality of neurons and minimizes their hyperspherical energy. According to different designs for the projection mapping, we propose several distinct yet well-performing variants.
 
-<img src="asserts/teaser.png" width="50%" height="50%">
+<img src="asserts/teaser.png" width="60%" height="60%">
 
 ### Short Video Introduction
 We also provide a short video introduction to help interested readers quickly go over our work and understand the essence of CoMHE. Please click the following figure to watch the Youtube video.
