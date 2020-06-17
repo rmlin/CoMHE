@@ -27,8 +27,15 @@ git clone https://github.com/rmlin/CoMHE.git
 wget https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz
 ```
 
-#### Part 3: Train and test with the following code
-```Shell  
+#### Part 3: Train and test with the following code in different folder. 
+```Shell
+# run random projection CoMHE
+cd random_projection
+python train.py
+```
+```Shell
+# run angle-preserving projection CoMHE
+cd angle_projection
 python train.py
 ```
 please refer to the code for details of parameters such as dimension and number of projections
