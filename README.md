@@ -61,3 +61,8 @@ If you find our work useful in your research, please consider to cite:
         booktitle={CVPR},
         year={2020}
     }
+
+### Contact
+
+- [Rongmei Lin](mailto:rongmei.lin@emory.edu)
+- [Weiyang Liu](https://wyliu.com)
