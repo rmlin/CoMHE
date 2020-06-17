@@ -58,4 +58,4 @@ If you find our work useful in your research, please consider to cite:
          and Rehg, James M. and Xiong, Li and Song, Le},
         booktitle={CVPR},
         year={2020}
-     }
+    }
