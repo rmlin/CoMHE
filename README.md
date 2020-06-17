@@ -38,7 +38,7 @@ python train.py
 cd angle_projection
 python train.py
 ```
-please refer to the code for details of parameters such as dimension and number of projections
+If you want to change the hyperparameter settings of CoMHE, please refer to the code for different input arguments such as dimension and number of projections
 
 ### Citation
 
