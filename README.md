@@ -8,6 +8,7 @@ Inspired by the Thomson problem in physics where the distribution of multiple pr
 <img src="asserts/teaser.png" width="60%" height="60%">
 
 ### Short Video Introduction
+We also provide a short video introduction to help interested readers quickly go over our work and understand the essence of CoMHE. Please click the following figure to watch the Youtube video.
 
 [![DCNet_talk](https://img.youtube.com/vi/vXxt_ggWW8s/0.jpg)](https://youtu.be/vXxt_ggWW8s)
 
