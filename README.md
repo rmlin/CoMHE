@@ -57,4 +57,5 @@ If you find our work useful in your research, please consider to cite:
         author={Lin, Rongmei and Liu, Weiyang and Liu, Zhen and Feng, Chen and Yu, Zhiding 
          and Rehg, James M. and Xiong, Li and Song, Le},
         booktitle={CVPR},
-        year={2020}}
+        year={2020}
+     }
