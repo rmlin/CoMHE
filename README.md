@@ -49,7 +49,7 @@ We also provide a short video introduction to help interested readers quickly go
 ```Shell  
 git clone https://github.com/rmlin/CoMHE.git
 ```
-#### Part 2: Download official CIFAR-100 training and testing data (python version)
+#### Part 2: Download the official CIFAR-100 training and testing data (python version)
 ```Shell  
 wget https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz
 ```
