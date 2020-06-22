@@ -174,11 +174,16 @@ if __name__ == "__main__":
                     help='p number')
     parser.add_argument('--iters', type=int, default=1,
                     help='iteration number')
-  
+    parser.add_argument('--random_seed', type=int, default=345,
+                    help='random seed')
+
     args = parser.parse_args()
 
     train_data = unpickle('../train')
     test_data = unpickle('../test')
+
+    tf.set_random_seed(args.random_seed)
+    np.random.seed(args.random_seed)  
 
     train(args.base_lr, args.batch_size, args.gpu_no, args.pd, args.pn, args.iters)
 

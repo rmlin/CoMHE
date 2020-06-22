@@ -3,8 +3,8 @@ import numpy as np
 
 class VGG():
     def get_conv_filter(self, shape, reg, stddev):
-        seed_num=shape[0]*shape[1]*shape[2]*shape[3]
-        init = tf.random_normal_initializer(stddev=stddev,seed=seed_num)
+        # seed_num=shape[0]*shape[1]*shape[2]*shape[3]
+        init = tf.random_normal_initializer(stddev=stddev)
         if reg:
             regu = tf.contrib.layers.l2_regularizer(self.wd)
             filt = tf.get_variable('filter', shape, initializer=init,regularizer=regu)
