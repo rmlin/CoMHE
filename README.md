@@ -2,6 +2,17 @@
 
 By Rongmei Lin, Weiyang Liu, Zhen Liu, Chen Feng, Zhiding Yu, James Rehg, Li Xiong, Le Song
 
+### License 
+*CoMHE* is released under the MIT License (refer to the LICENSE file for details).
+
+### Contents
+0. [Introduction](#introduction)
+0. [Citation](#citation)
+0. [Short Video Introduction](#short-video-introduction)
+0. [Requirements](#requirements)
+0. [Usage](#usage)
+0. [Results](#results)
+
 ### Introduction
 Inspired by the Thomson problem in physics where the distribution of multiple propelling electrons on a unit sphere can be modeled via minimizing some potential energy, hyperspherical energy minimization has demonstrated its potential in regularizing neural networks and improving their generalization power. See our previous work -- [MHE](https://wyliu.com/papers/LiuNIPS18_MHE.pdf) for an in-depth introduction.
 
@@ -11,10 +22,22 @@ Here we propose the compressive minimum hyperspherical energy (CoMHE) as a more 
 
 <img src="asserts/teaser.png" width="60%" height="60%">
 
+### Citation
+If you find our work useful in your research, please consider to cite:
+
+    @InProceedings{Lin20CoMHE,
+        title={Regularizing Neural Networks via Minimizing Hyperspherical Energy},
+        author={Lin, Rongmei and Liu, Weiyang and Liu, Zhen and Feng, Chen and Yu, Zhiding 
+         and Rehg, James M. and Xiong, Li and Song, Le},
+        booktitle={CVPR},
+        year={2020}
+    }
+
 ### Short Video Introduction
 We also provide a short video introduction to help interested readers quickly go over our work and understand the essence of CoMHE. Please click the following figure to watch the Youtube video.
 
 [![DCNet_talk](https://img.youtube.com/vi/vXxt_ggWW8s/0.jpg)](https://youtu.be/vXxt_ggWW8s)
+
 
 ### Requirements
 1. `Python 3.6` 
@@ -48,23 +71,14 @@ python train.py
 cd adversarial_projection
 python train.py
 ```
-If you want to change the hyperparameter settings of CoMHE, please refer to the file [train.py](https://github.com/rmlin/CoMHE/blob/master/random_projection/train.py) for different input arguments such as dimension and number of projections. The expected training and testing dynamics (loss and accuracy) can be found in the corresponding log folder. 
+If you want to change the hyperparameter settings of CoMHE, please refer to the file [train.py](https://github.com/rmlin/CoMHE/blob/master/random_projection/train.py) for different input arguments such as dimension and number of projections. 
+
+### Results
+The expected training and testing dynamics (loss and accuracy) can be found in the corresponding log folder. 
 
 - Random projection CoMHE: [log](random_projection/log/pd40_pn20)
 - Angle-preserving projection CoMHE: [log](angle_projection/log/pd30_pn1_iter1)
 - Adversarial projection CoMHE: [log](adversarial_projection/log/pd30_pn1_iter10/)
-
-### Citation
-
-If you find our work useful in your research, please consider to cite:
-
-    @InProceedings{Lin20CoMHE,
-        title={Regularizing Neural Networks via Minimizing Hyperspherical Energy},
-        author={Lin, Rongmei and Liu, Weiyang and Liu, Zhen and Feng, Chen and Yu, Zhiding 
-         and Rehg, James M. and Xiong, Li and Song, Le},
-        booktitle={CVPR},
-        year={2020}
-    }
 
 ### Contact
 
