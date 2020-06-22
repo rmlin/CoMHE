@@ -20,7 +20,7 @@ Here we propose the compressive minimum hyperspherical energy (CoMHE) as a more 
 
 **Our CoMHE is accepted to [CVPR 2020](http://cvpr2020.thecvf.com/) and the full paper is available on [arXiv](https://arxiv.org/abs/1906.04892) and [here](https://wyliu.com/papers/LiuCVPR20.pdf).**
 
-<img src="asserts/teaser.png" width="50%" height="50%">
+<img src="asserts/teaser.png" width="55%" height="55%">
 
 ### Citation
 If you find our work useful in your research, please consider to cite:
