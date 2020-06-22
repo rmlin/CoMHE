@@ -48,7 +48,7 @@ python train.py
 cd adversarial_projection
 python train.py
 ```
-If you want to change the hyperparameter settings of CoMHE, please refer to the file ``train.py`` for different input arguments such as dimension and number of projections
+If you want to change the hyperparameter settings of CoMHE, please refer to the file [train.py](https://github.com/rmlin/CoMHE/blob/master/random_projection/train.py) for different input arguments such as dimension and number of projections. The expected training dynamics can be found in the corresponding [log](https://github.com/rmlin/CoMHE/tree/master/random_projection/log/pd40_pn20) folder.
 
 ### Citation
 
